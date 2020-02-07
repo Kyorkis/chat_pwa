@@ -1,0 +1,88 @@
+urlForGettingData = "https://api.myjson.com/bins/s66rm"
+    getDataAsync = async (url) =>    {
+        const res = await fetch(url)
+
+        if(!res.ok){
+            throw new Error(`Could not fetch ${url} ` + `,recieved ${res.status}`)
+        }
+
+        const body = await res.json()
+        console.log("async/await",body)
+        return ( await body)
+         
+    }
+    getDataFetch=(url)=>{
+        fetch(url)
+        .then((res)=>{
+            return res.json()
+        })
+        .then((body)=>{
+            console.log(".then",body)
+        })
+        .catch((err)=>{
+            console.log('Could not fetch',err)
+        })
+    }
+
+    componentDidMount(){
+        this.getDataAsync('https://swapi.co/api/people/1')
+        this.getDataAsync(this.urlForGettingData)
+    }
+
+
+
+
+
+
+    import React from 'react';
+import Header from '../header/header'
+import Footer from '../footer/footer'
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Main from '../main/main'
+import Banner from '../banner/banner'
+import Banket from'../banket/banket'
+import Dostavka from '../dostavka/dostavka'
+import Xogo from '../xogo/xogo'
+import About from '../about/about'
+import Contact from '../contact/contact'
+import Cart from '../cart'
+import Create from '../create'
+import {BrowserRouter,Route} from'react-router-dom'
+import './app.css'
+
+
+import initStore from '../../utils/store'
+import {Provider} from 'react-redux'
+
+import { ConnectedRouter } from 'connected-react-router';
+import {history} from '../../utils/store'
+import ItemList from '../item-list-redux/'
+
+const store = initStore()
+function App() {
+  return (
+    <Provider store={store}>
+      <div className="App">
+        <ConnectedRouter basename="/immun_pwa/" history={history}>
+          <Header clicked={"false"}/>
+          <Banner/>
+          <div className="bodyWrapper">
+            <Route path='/' component={Main} exact/>
+            <Route path='/banket' component={Banket}/>
+            <Route path='/dostavka' component={Dostavka}/>
+            <Route path='/stol' component={Xogo}/>
+            <Route path='/about' component={About}/>
+            <Route path='/contact' component={Contact}/>
+            <Route path="/products/:category" render={(props)=><ItemList  {...props}/>}/>
+            <Route path='/cart' component={Cart}/>
+            <Route path='/create' component={Create}/>
+          </div>
+          <Footer/> 
+        </ConnectedRouter>
+      </div>
+    </Provider>
+  );
+}
+
+export default App;
